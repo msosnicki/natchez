@@ -27,6 +27,15 @@ final case class DDSpan[F[_]: Sync](
     uriPrefix: Option[URI],
     options: Span.Options
 ) extends Span.Default[F] {
+
+  def asString(): String = {
+    println("TO STRING")
+    val map =
+      span.context().baggageItems().asScala.map(entry => entry.getKey() -> entry.getValue()).toMap
+    span.context().toSpanId()
+    s"id: ${span.context.toSpanId} $map"
+  }
+
   override protected val spanCreationPolicyOverride: Options.SpanCreationPolicy =
     options.spanCreationPolicy
 
@@ -112,4 +121,5 @@ final case class DDSpan[F[_]: Sync](
           ) ++ fields.toList.nested.map(_.value).value.toMap).asJava
         )
       }.void
+
 }

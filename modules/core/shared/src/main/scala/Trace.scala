@@ -73,7 +73,10 @@ object Trace {
           local.get.flatMap(_.put(fields: _*))
 
         override def attachError(err: Throwable, fields: (String, TraceValue)*): IO[Unit] =
-          local.get.flatMap(_.attachError(err, fields: _*))
+          local.get.flatMap { span =>
+            span.spanId.flatMap(id => IO.println(s"Attaching errors in natchez for span $id ${span.toString()}")) >>
+              span.attachError(err, fields: _*)
+          }
 
         override def log(fields: (String, TraceValue)*): IO[Unit] =
           local.get.flatMap(_.log(fields: _*))
