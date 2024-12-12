@@ -21,14 +21,14 @@ import natchez.datadog.DDTracer.{addLink, addSpanKind}
 import scala.jdk.CollectionConverters._
 import java.net.URI
 
-final case class DDSpan[F[_]: Sync](
+case class DDSpan[F[_]: Sync](
     tracer: ot.Tracer,
     span: ot.Span,
     uriPrefix: Option[URI],
     options: Span.Options
 ) extends Span.Default[F] {
 
-  def asString(): String = {
+  override def toString(): String = {
     println("TO STRING")
     val map =
       span.context().baggageItems().asScala.map(entry => entry.getKey() -> entry.getValue()).toMap
